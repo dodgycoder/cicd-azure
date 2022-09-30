@@ -12,6 +12,14 @@ variable "tags" {
   }
 }
 
+variable "storage" {
+  type = map(string)
+  default = {
+    "account" = "storagelab5678"
+    "blobname" = "webappblob"
+  }
+}
+
 
 variable "resource_group_name_prefix" {
   default     = "ARNAB-LAB-TF"

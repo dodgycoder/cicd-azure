@@ -113,6 +113,23 @@ resource "tls_private_key" "ssh_key" {
   rsa_bits  = 4096
 }
 
+#cloud-init-script 
+locals {
+  custom_data = <<EOF
+  #!/bin/bash
+  sudo apt -y update && apt -y upgrade
+  sudo apt -y install php libapache2-mod-php apache2 composer imagemagick
+  sudo systemctl enable apache2
+  sudo mkdir -p /var/www/data
+  sudo rm -f /etc/ImageMagick-6/policy.xml
+  sudo rm -rf /var/www/html/*
+  sudo git clone https://github.com/dodgycoder/Azure-PDF-APP.git /var/www/html/
+  sudo chown -R www-data:www-data /var/www/
+  sudo systemctl start apache2
+  EOF
+  }
+
+
 resource "azurerm_role_definition" "app-role" {
   name        = "role-${var.resource_group_name_prefix}"
   scope       = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}"
@@ -170,6 +187,9 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
       Owner = var.tags["value"]  
     }  
  
+  custom_data = base64encode(local.custom_data)
+
+
 }
 
 resource "azurerm_role_assignment" "assign_role" {
@@ -180,7 +200,7 @@ resource "azurerm_role_assignment" "assign_role" {
 }
 
 resource "azurerm_storage_account" "app-storage" {
-  name                     = "stacc${random_string.random_str_lower.result}"
+  name                     = var.storage["account"]
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -193,7 +213,7 @@ resource "azurerm_storage_account" "app-storage" {
 }
 
 resource "azurerm_storage_container" "app-container" {
-  name                  = "app-container"
+  name                  = var.storage["blobname"]
   storage_account_name  = azurerm_storage_account.app-storage.name
   container_access_type = "private"
 }
