@@ -54,13 +54,13 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
-    name                       = "Open-SSH"
+    name                       = "Open-ALL"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "*"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -110,16 +110,16 @@ resource "tls_private_key" "ssh_key" {
 
 resource "azurerm_role_definition" "app-role" {
   name        = "role-${var.resource_group_name_prefix}"
-  scope       = "${data.azurerm_subscription.primary.id}"
+  scope       = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}"
   description = "This is a custom role created via Terraform"
 
   permissions {
-    actions     = ["*"]
+    actions     = ["Microsoft.Resources/subscriptions/resourceGroups/read","Microsoft.Storage/storageAccounts/*"]
     not_actions = []
   }
 
 assignable_scopes = [
-    "${data.azurerm_subscription.primary.id}", 
+    "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}", 
   ]
    
 
@@ -171,4 +171,23 @@ resource "azurerm_role_assignment" "assign_role" {
   scope              = data.azurerm_subscription.primary.id
   role_definition_id = azurerm_role_definition.app-role.role_definition_resource_id
   principal_id       = azurerm_linux_virtual_machine.my_terraform_vm.identity[0].principal_id
+}
+
+resource "azurerm_storage_account" "app-storage" {
+  name                     = "ST-ACC-${var.resource_group_name_prefix}"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  shared_access_key_enabled = "true"
+
+  tags = {
+    Owner = var.tags["value"]
+  }
+}
+
+resource "azurerm_storage_container" "app-container" {
+  name                  = "app-container"
+  storage_account_name  = azurerm_storage_account.app-container.name
+  container_access_type = "private"
 }
