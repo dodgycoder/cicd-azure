@@ -6,6 +6,11 @@ resource "random_string" "random_str_val" {
   min_upper = 8
 }
 
+resource "random_string" "random_str_lower" {
+  special = false
+  upper = false
+  length =8
+}
 
 resource "azurerm_resource_group" "rg" {
     location = var.resource_group_location
@@ -154,6 +159,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   admin_ssh_key {
     username   = "azureuser"
     public_key = tls_private_key.ssh_key.public_key_openssh
+    
   }
 
   identity {
@@ -168,13 +174,13 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
 
 resource "azurerm_role_assignment" "assign_role" {
   name               = azurerm_role_definition.app-role.role_definition_id
-  scope              = data.azurerm_subscription.primary.id
+  scope              = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}"
   role_definition_id = azurerm_role_definition.app-role.role_definition_resource_id
   principal_id       = azurerm_linux_virtual_machine.my_terraform_vm.identity[0].principal_id
 }
 
 resource "azurerm_storage_account" "app-storage" {
-  name                     = "ST-ACC-${var.resource_group_name_prefix}"
+  name                     = "stacc${random_string.random_str_lower.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -188,6 +194,6 @@ resource "azurerm_storage_account" "app-storage" {
 
 resource "azurerm_storage_container" "app-container" {
   name                  = "app-container"
-  storage_account_name  = azurerm_storage_account.app-container.name
+  storage_account_name  = azurerm_storage_account.app-storage.name
   container_access_type = "private"
 }
