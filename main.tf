@@ -116,17 +116,17 @@ resource "tls_private_key" "ssh_key" {
 #cloud-init-script 
 locals {
   custom_data = <<EOF
-  #!/bin/bash
-  sudo apt -y update && apt -y upgrade
-  sudo apt -y install php libapache2-mod-php apache2 composer imagemagick
-  sudo systemctl enable apache2
-  sudo mkdir -p /var/www/data
-  sudo rm -f /etc/ImageMagick-6/policy.xml
-  sudo rm -rf /var/www/html/*
-  sudo git clone https://github.com/dodgycoder/Azure-PDF-APP.git /var/www/html/
-  sudo chown -R www-data:www-data /var/www/
-  sudo systemctl start apache2
-  EOF
+#!/bin/bash
+sudo apt -y update && apt -y upgrade
+sudo apt -y install php php-curl libapache2-mod-php apache2 composer imagemagick
+sudo systemctl enable apache2
+sudo mkdir -p /var/www/data
+sudo rm -f /etc/ImageMagick-6/policy.xml
+sudo rm -rf /var/www/html/*
+sudo git clone https://github.com/dodgycoder/Azure-PDF-APP.git /var/www/html/
+sudo chown -R www-data:www-data /var/www/
+sudo systemctl start apache2
+EOF
   }
 
 
@@ -187,7 +187,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
       Owner = var.tags["value"]  
     }  
  
-  user_data = base64encode(local.custom_data)
+  custom_data = base64encode(local.custom_data)
 
 
 }
