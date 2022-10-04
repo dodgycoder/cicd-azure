@@ -124,6 +124,8 @@ sudo mkdir -p /var/www/data
 sudo rm -f /etc/ImageMagick-6/policy.xml
 sudo rm -rf /var/www/html/*
 sudo git clone https://github.com/dodgycoder/Azure-PDF-APP.git /var/www/html/
+cd /var/www/html && sudo sed -i 's/<storageaccount>/${var.storage["account"]}/g' index.php
+cd /var/www/html && sudo sed -i 's/<blobname>/${var.storage["blobname"]}/g' index.php 
 sudo chown -R www-data:www-data /var/www/
 sudo systemctl start apache2
 EOF
