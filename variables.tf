@@ -15,14 +15,14 @@ variable "tags" {
 variable "storage" {
   type = map(string)
   default = {
-    "account" = "zsstorageaccount56999"
-    "blobname" = "webappblob8922"
+    "account" = "zsstorageaccount988"
+    "blobname" = "webappblob8978"
   }
 }
 
 
 variable "resource_group_name_prefix" {
-  default     = "ARNAB-LAB-ATTACK"
+  default     = "ARNAB-LAB-webapp"
   description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
 }
 
