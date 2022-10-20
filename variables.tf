@@ -15,7 +15,7 @@ variable "tags" {
 variable "storage" {
   type = map(string)
   default = {
-    "account" = "zs-pdfstoragelab1445"
+    "account" = "zspdfstoragelab1445"
     "blobname" = "webappblobpdf123"
   }
 }
