@@ -196,7 +196,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
 
 resource "azurerm_role_assignment" "assign_role" {
   name               = azurerm_role_definition.app-role.role_definition_id
-  scope              = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}"
+  scope              = "${data.azurerm_subscription.primary.id}"
   role_definition_id = azurerm_role_definition.app-role.role_definition_resource_id
   principal_id       = azurerm_linux_virtual_machine.my_terraform_vm.identity[0].principal_id
 }
