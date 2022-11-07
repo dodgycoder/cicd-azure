@@ -143,7 +143,7 @@ resource "azurerm_role_definition" "app-role" {
   }
 
 assignable_scopes = [
-    "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}", 
+    "${data.azurerm_subscription.primary.id}", 
   ]
    
 
