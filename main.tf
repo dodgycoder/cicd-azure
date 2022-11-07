@@ -134,7 +134,7 @@ EOF
 
 resource "azurerm_role_definition" "app-role" {
   name        = "role-${var.resource_group_name_prefix}"
-  scope       = "${data.azurerm_subscription.primary.id}/resourceGroups/${azurerm_resource_group.rg.name}"
+  scope       = "${data.azurerm_subscription.primary.id}"
   description = "This is a custom role created via Terraform"
 
   permissions {
