@@ -1,5 +1,5 @@
 variable "resource_group_location" {
-  default     = "westus"
+  default     = "eastus"
   description = "Location of the resource group."
  
 }
@@ -15,14 +15,14 @@ variable "tags" {
 variable "storage" {
   type = map(string)
   default = {
-    "account" = "pdflabstorageattackdemo"
-    "blobname" = "pdflabwebappblobpdf123"
+    "account" = "zspdflabstorageattackdemo"
+    "blobname" = "zspdflabwebappblobpdf123"
   }
 }
 
 
 variable "resource_group_name_prefix" {
-  default     = "ARNAB-LAB-PDF-APP-DEMO"
+  default     = "ZS-ARNAB-LAB-PDF-APP-DEMO"
   description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
 }
 
